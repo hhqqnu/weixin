@@ -3,3 +3,4 @@ start.sh
 # VIM
 *~
 *.swp
+*.log

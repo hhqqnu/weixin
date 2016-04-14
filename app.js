@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var todos = require('./routes/todos');
 var wx = require('./routes/wxrouter');
+var api = require('./routes/api');
 var cloud = require('./cloud');
 
 var app = express();
@@ -57,6 +58,7 @@ app.get('/', function(req, res) {
 
 //weixin
 app.use('/wx', wx);
+app.use('/api',api);
 
 // 可以将一类的路由单独保存在一个文件中
 app.use('/todos', todos);

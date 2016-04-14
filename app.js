@@ -23,7 +23,9 @@ app.use(cloud);
 // app.use(AV.Cloud);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(cookieParser());
 
 // 未处理异常捕获 middleware
@@ -38,7 +40,7 @@ app.use(function(req, res, next) {
   d.add(res);
   d.on('error', function(err) {
     console.error('uncaughtException url=%s, msg=%s', req.url, err.stack || err.message || err);
-    if(!res.finished) {
+    if (!res.finished) {
       res.statusCode = 500;
       res.setHeader('content-type', 'application/json; charset=UTF-8');
       res.end('uncaughtException');
@@ -48,11 +50,13 @@ app.use(function(req, res, next) {
 });
 
 app.get('/', function(req, res) {
-  res.render('index', { currentTime: new Date() });
+  res.render('index', {
+    currentTime: new Date()
+  });
 });
 
 //weixin
-app.use('/wx',wx);
+app.use('/wx', wx);
 
 // 可以将一类的路由单独保存在一个文件中
 app.use('/todos', todos);
@@ -71,7 +75,7 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) { // jshint ignore:line
     var statusCode = err.status || 500;
-    if(statusCode === 500) {
+    if (statusCode === 500) {
       console.error(err.stack || err);
     }
     res.status(statusCode);

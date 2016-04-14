@@ -44,6 +44,31 @@ WeiXin.prototype.parseTextMsg = function() {
   return this;
 }
 
+WeiXin.prototype.sendTextMsg = function(msg) {
+  if (msg.content == '') {
+    this.res.type('string');
+    this.res.send('');
+    return this;
+  }
+
+  var time = Math.round(new Date().getTime() / 1000);
+  var funcFlag = msg.funcFlag ? msg.funcFlag : this.funcFlag;
+  var output = "" +
+    "<xml>" +
+    "<ToUserName><![CDATA[" + msg.toUserName + "]]></ToUserName>" +
+    "<FromUserName><![CDATA[" + msg.fromUserName + "]]></FromUserName>" +
+    "<CreateTime>" + time + "</CreateTime>" +
+    "<MsgType><![CDATA[" + msg.msgType + "]]></MsgType>" +
+    "<Content><![CDATA[" + msg.content + "]]></Content>" +
+    "<FuncFlag>" + funcFlag + "</FuncFlag>" +
+    "</xml>";
+  this.res.type('xml');
+  this.res.send(output);
+
+  return this;
+
+
+}
 
 
 WeiXin.prototype.parse = function() {
@@ -51,6 +76,15 @@ WeiXin.prototype.parse = function() {
   switch (this.msgType) {
     case 'text':
       this.parseTextMsg();
+      break;
+  }
+}
+
+
+WeiXin.prototype.sendMsg = function(msg) {
+  switch (msg.msgType) {
+    case 'text':
+      this.sendTextMsg(msg);
       break;
   }
 }
@@ -74,7 +108,6 @@ WeiXin.prototype.loop = function(req, res) {
         req.body = json;
       }
     });
-
     self.data = req.body.xml;
     self.parse();
   });

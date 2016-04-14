@@ -12,4 +12,6 @@ router.get('/',function(req,res,next){
   return res.render('index');
 })
 
+weixin.token = aotuConfig.token;
+
 module.exports = router;

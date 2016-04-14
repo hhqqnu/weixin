@@ -31,5 +31,9 @@
   },
   "engines": {
     "node": "4.x"
+  },
+  "devDependencies": {
+    "sha1": "^1.1.1",
+    "xml2js": "^0.4.16"
   }
 }

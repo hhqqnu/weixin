@@ -4,13 +4,15 @@ var weixin = require('../api/weixin');
 
 var config = require('../config/config');
 var aotuConfig = config.wx_config.aotu;
-var keyword = require('../config/keywords');
+var keywords = require('../config/keywords');
 
 router.get('/', function(req, res, next) {
   if (weixin.checkSignature(req)) {
     return res.status(200).send(req.query.echostr);
   }
-  return res.render('index');
+  return res.render('index', {
+    createTime: new Date()
+  });
 })
 
 router.post('/', function(req, res) {
@@ -30,11 +32,13 @@ weixin.textMsg(function(msg) {
     funcFlag: 0
   };
 
-
-  if (!!keyword.exactKey[msgContent]) {
-    resMsg.content = keyword.exactKey[msgContent].content;
+  if (!!keywords.exactKey[msgContent]) {
+    resMsg.content = keywords.exactKey[msgContent].content;
     flag = true;
-  }else{
+  } else if (msgContent, 'tq') {
+    resMsg.content = '获取天气情况';
+    falg = true;
+  } else {
     flag = true;
   }
 
@@ -43,9 +47,16 @@ weixin.textMsg(function(msg) {
     return ("" + str).replace(/^\s+/gi, '').replace(/\s+$/gi, '').toUpperCase();
   }
 
+  function isKeyInStr(str, key) {
+    str = trim(str);
+    key = trim(key);
+    return /^(key)*?\s(\w)*/g.test(str);
+  }
+
   if (falg) {
     weixin.sendMsg(resMsg);
   }
+
 });
 
 

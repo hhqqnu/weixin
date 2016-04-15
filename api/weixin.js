@@ -39,7 +39,6 @@ WeiXin.prototype.parseTextMsg = function() {
     "content": this.data.Content[0],
     "msgId": this.data.MsgId[0],
   };
-
   emitter.emit('weixinTextMsg', msg);
   return this;
 }

@@ -4,7 +4,7 @@ var weixin = require('../api/weixin');
 
 var config = require('../config/config');
 var aotuConfig = config.wx_config.aotu;
-var keyword = require('../config/keyword');
+var keyword = require('../config/keywords');
 
 router.get('/', function(req, res, next) {
   if (weixin.checkSignature(req)) {
@@ -21,7 +21,7 @@ weixin.token = aotuConfig.token;
 
 weixin.textMsg(function(msg) {
   var msgContent = trim(msg.content);
-
+  var flag = false;
   var resMsg = {
     fromUserName: msg.toUserName,
     toUserName: msg.fromUserName,
@@ -34,6 +34,8 @@ weixin.textMsg(function(msg) {
   if (!!keyword.exactKey[msgContent]) {
     resMsg.content = keyword.exactKey[msgContent].content;
     flag = true;
+  }else{
+    flag = true;
   }
 
   // 去掉前后空格并且转换成大写
@@ -41,8 +43,9 @@ weixin.textMsg(function(msg) {
     return ("" + str).replace(/^\s+/gi, '').replace(/\s+$/gi, '').toUpperCase();
   }
 
-  weixin.sendMsg(resMsg);
-
+  if (falg) {
+    weixin.sendMsg(resMsg);
+  }
 });
 
 

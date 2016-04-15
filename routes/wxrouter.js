@@ -35,7 +35,7 @@ weixin.textMsg(function(msg) {
   if (!!keywords.exactKey[msgContent]) {
     resMsg.content = keywords.exactKey[msgContent].content;
     flag = true;
-  } else if (isKeyInStr(msgContent, 'tq')) {
+  } else if (isKeyInStr(msgContent, 'w')) {
     var splits = msgContent.split(' ');
     if (splits.length == 2) {
       var city = splits[1];

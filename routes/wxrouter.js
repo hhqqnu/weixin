@@ -1,6 +1,6 @@
 var router = require('express').Router();
 var weixin = require('../api/weixin');
-
+var tianqi = require('../api/tianqi');
 
 var config = require('../config/config');
 var aotuConfig = config.wx_config.aotu;
@@ -35,9 +35,35 @@ weixin.textMsg(function(msg) {
   if (!!keywords.exactKey[msgContent]) {
     resMsg.content = keywords.exactKey[msgContent].content;
     flag = true;
-  } else if (msgContent, 'tq') {
-    resMsg.content = '获取天气情况';
-    falg = true;
+  } else if (isKeyInStr(msgContent, 'tq')) {
+    var splits = msgContent.split(' ');
+    if (splits.length == 2) {
+      var city = splits[1];
+      tianqi(city, function(json) {
+        if (json.err) {
+          return weixin.sendMsg(resMsg)
+        }
+        var data = json.msg;
+        if (data.errNum == 0) {
+          var today = data.retData.today;
+          var todayStr = " " + data.retData.city + "天气 " + today.type + "\n";
+          todayStr += "  当前温度 " + today.curTemp + "\n";
+          todayStr += "  最低温度 " + today.lowtemp + "\n";
+          todayStr += "  最高温度 " + today.hightemp + "\n";
+          todayStr += "  风力 " + today.fengli + "\n";
+
+          var todayOtherStr = "\n";
+
+          today.index.forEach(function(item, index) {
+            todayOtherStr += " " + (++index) + "." + item.name + " " + item.index + " " + item.details;
+          });
+          resMsg.content = todayStr + todayOtherStr;
+          return weixin.sendMsg(resMsg);
+        } else {
+          return weixin.sendMsg(resMsg)
+        }
+      });
+    }
   } else {
     flag = true;
   }
@@ -50,10 +76,10 @@ weixin.textMsg(function(msg) {
   function isKeyInStr(str, key) {
     str = trim(str);
     key = trim(key);
-    return /^(key)*?\s(\w)*/g.test(str);
+    return /^(key)*?(\s)*(\w)*/g.test(str);
   }
 
-  if (falg) {
+  if (flag) {
     weixin.sendMsg(resMsg);
   }
 

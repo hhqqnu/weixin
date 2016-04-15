@@ -32,6 +32,14 @@ module.exports = {
           "sub_button": []
         }]
       }]
+    },
+    tq: {
+      "ipURL": "http://whois.pconline.com.cn/ipJson.jsp?json=true",
+      "ipToCityNameURL": "http://apis.baidu.com/apistore/iplookupservice/iplookup?ip=",
+      "ipToCityNameApiKey": "7328474baf90532437b4becdc5f65706",
+      'cityUrl': 'http://apistore.baidu.com/microservice/cityinfo?cityname=',
+      'weatherApikey': '7328474baf90532437b4becdc5f65706',
+      'weatherUrl': 'http://apis.baidu.com/apistore/weatherservice/recentweathers?cityid='
     }
   }
 };

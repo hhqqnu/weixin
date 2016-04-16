@@ -1,6 +1,7 @@
 var router = require('express').Router();
 var weixin = require('../api/weixin');
 var tianqi = require('../api/tianqi');
+var blog = require('../api/blog');
 
 var config = require('../config/config');
 var aotuConfig = config.wx_config.aotu;
@@ -13,7 +14,7 @@ router.get('/', function(req, res, next) {
   return res.render('index', {
     createTime: new Date()
   });
-})
+});
 
 router.post('/', function(req, res) {
   weixin.loop(req, res);
@@ -41,8 +42,31 @@ weixin.textMsg(function(msg) {
       var city = splits[1];
       tianqi(city, tqCallback());
     } else {
-      tianqi('',tqCallback());
+      tianqi('', tqCallback());
     }
+  } else if(isKeyInStr(msgContent,'a')){
+    var splits = msgContent.split(' ');
+    var reqBlogs = [];
+    if(splits.length == 2){
+      var index = parseInt(splits[1],10);
+      if(isNaN(index)){
+        reqBlogs.push(blog.getLastBlog());
+      }else{
+        reqBlogs.push(blog.getBlogByIndex(index));
+      }
+    }else{
+      reqBlogs = blog.getAllBlog();
+    }
+
+    resMsg = {
+      fromUserName : msg.toUserName,
+      toUserName : msg.fromUserName,
+      msgType:'news',
+      reqBlogs:reqBlogs,
+      funcFlag:0
+    };
+    
+    flag = true;
   } else {
     flag = true;
   }
@@ -79,7 +103,15 @@ weixin.textMsg(function(msg) {
         today.index.forEach(function(item, index) {
           todayOtherStr += "\n " + (++index) + "." + item.name + " " + item.index + " " + item.details;
         });
-        resMsg.content = todayStr + todayOtherStr;
+
+        //console.log(data.retData.forecast);
+        var forecastStr = '\n未来四天天气情况：';
+        data.retData.forecast.forEach(function(item,index){
+          var i = index++;
+          forecastStr += '\n' + (++i) + '.' + item.date + ' ' + item.week + ' ' + item.fengxiang + ' ' + item.fengli + ' ' + item.hightemp + ' ' + item.lowtemp + ' ' + item.type;
+        });
+
+        resMsg.content = todayStr + todayOtherStr + forecastStr;
         return weixin.sendMsg(resMsg);
       } else {
         return weixin.sendMsg(resMsg)

@@ -69,6 +69,35 @@ WeiXin.prototype.sendTextMsg = function(msg) {
 
 }
 
+WeiXin.prototype.sendNewsMsg = function(msg) {
+  var time = Math.round(new Date().getTime() / 1000);
+
+  var blogsStr = '';
+  for (var i = 0; i < msg.reqBlogs.length; i++) {
+    var curBlog = msg.reqBlogs[i];
+    blogsStr += "<item>" +
+      "<Title><![CDATA[" + curBlog.title + "]]></Title>" +
+      "<Description><![CDATA[" + curBlog.description + "]]></Description>" +
+      "<PicUrl><![CDATA[" + curBlog.picUrl + "]]></PicUrl>" +
+      "<Url><![CDATA[" + curBlog.url + "]]></Url>" +
+      "</item>";
+  }
+  var funcFlag = msg.funcFlag ? msg.funcFlag : this.funcFlag;
+  var output = "" +
+    "<xml>" +
+    "<ToUserName><![CDATA[" + msg.toUserName + "]]></ToUserName>" +
+    "<FromUserName><![CDATA[" + msg.fromUserName + "]]></FromUserName>" +
+    "<CreateTime>" + time + "</CreateTime>" +
+    "<MsgType><![CDATA[" + msg.msgType + "]]></MsgType>" +
+    "<ArticleCount>" + msg.reqBlogs.length + "</ArticleCount>" +
+    "<Articles>" + blogsStr + "</Articles>" +
+    "<FuncFlag>" + funcFlag + "</FuncFlag>" +
+    "</xml>";
+  this.res.type('xml');
+  this.res.send(output);
+  return this;
+}
+
 
 WeiXin.prototype.parse = function() {
   this.msgType = this.data.MsgType[0] ? this.data.MsgType[0] : 'text';
@@ -84,6 +113,10 @@ WeiXin.prototype.sendMsg = function(msg) {
   switch (msg.msgType) {
     case 'text':
       this.sendTextMsg(msg);
+      break;
+
+    case 'news':
+      this.sendNewsMsg(msg);
       break;
   }
 }

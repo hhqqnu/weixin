@@ -2,8 +2,8 @@ module.exports = {
   wx_config: {
     aotu: {
       token: 'tomWeiXinCourse',
-      appid: 'wx5286fb575f081a6b',
-      secret: '657e9d50a912af81c26f56c50e5855d5',
+      appid: 'wxddcbcf09ccc29da0',
+      secret: '772fa99c88aa08c439c0b31af4a44b1c',
       cached: {}
     },
     menu: {

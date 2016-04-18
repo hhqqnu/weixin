@@ -4,34 +4,32 @@ module.exports = {
       token: 'tomWeiXinCourse',
       appid: 'wxddcbcf09ccc29da0',
       secret: '772fa99c88aa08c439c0b31af4a44b1c',
-      cached: {}
-    },
-    menu: {
-      'button': [{
-        "name": "关于我",
-        "sub_button": [{
-          "type": "view",
-          "name": "博客",
-          "url": "http://www.cnblogs.com/tom-zhu",
-          "sub_button": []
+      cached: {},
+      menu: {
+        "button": [{
+          "name": "关于我",
+          "sub_button": [{
+            "type": "view",
+            "name": "博客",
+            "url": "http://www.cnblogs.com/tom-zhu"
+          }]
+        }, {
+          "name": "生活工具",
+          "sub_button": [{
+            "type": "click",
+            "name": "天气",
+            "key": "getlocationweather",
+            "sub_button": []
+          }]
+        }, {
+          "name": "开发小工具",
+          "sub_button": [{
+            "type": "click",
+            "name": "扫一扫",
+            "key": "scancode_push"
+          }]
         }]
-      }, {
-        "name": "生活工具",
-        "sub_button": [{
-          "type": "view",
-          "name": "天气",
-          "url": "http://www.baidu.com",
-          "sub_button": []
-        }]
-      }, {
-        "name": "开发小工具",
-        "sub_button": [{
-          "type": "view",
-          "name": "扫一扫",
-          "url": "http://www.baidu.com",
-          "sub_button": []
-        }]
-      }]
+      }
     },
     tq: {
       "ipURL": "http://whois.pconline.com.cn/ipJson.jsp?json=true",

@@ -43,6 +43,30 @@ WeiXin.prototype.parseTextMsg = function() {
   return this;
 }
 
+WeiXin.prototype.parseEventMsg = function(){
+  var eventKey = '';
+  if(this.data.EventKey){
+    eventKey = this.data.EventKey[0];
+  }
+  var msg = {
+    "toUserName" : this.data.ToUserName[0],
+    "fromUserName" : this.data.FromUserName[0],
+    "createTime" : this.data.CreateTime[0],
+    "msgType" : this.data.MsgType[0],
+    "event" : this.data.Event[0],
+    "eventKey" : eventKey
+  }
+  
+  emitter.emit("weixinEventMsg", msg);
+  return this;
+}
+
+WeiXin.prototype.eventMsg = function(callback){
+  emitter.on('weixinEventMsg',callback);
+  return this;
+}
+
+
 WeiXin.prototype.sendTextMsg = function(msg) {
   if (msg.content == '') {
     this.res.type('string');
@@ -104,6 +128,8 @@ WeiXin.prototype.parse = function() {
   switch (this.msgType) {
     case 'text':
       this.parseTextMsg();
+    case 'event':
+      this.parseEventMsg();
       break;
   }
 }

@@ -43,7 +43,6 @@ router.get('/menu_list', function(req, res, next) {
 router.get('/menu_create', function(req, res, next) {
   var key = req.query.key;
   var form = !!key ? aotuConfig[key] : aotuConfig['menu'];
-
   var url = !!key ? 'https://api.weixin.qq.com/cgi-bin/menu/addconditional?access_token=' : 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token=';
 
   util.getToken(aotuConfig, function(result) {
@@ -53,7 +52,7 @@ router.get('/menu_create', function(req, res, next) {
     var access_token = result.data.access_token;
     request.post({
       url: url + access_token,
-      form: form
+      form: JSON.stringify(form)
     }, function(error, response, body) {
       if (!error) {
         return res.status(200).send(JSON.parse(body));

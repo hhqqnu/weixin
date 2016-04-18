@@ -125,6 +125,24 @@ weixin.textMsg(function(msg) {
 
 });
 
+weixin.eventMsg(function(msg){
+  log.info('收到事件消息:'+JSON.stringify(msg));
+  var resMsg = {
+    fromUserName:msg.toUserName,
+    toUserName:msg.fromUserName,
+    msgType:'text',
+    content:'',
+    funcFlag:0
+  };
+
+  if(msg.event == 'subscribe'){
+
+  }
+  if(msg.event == 'CLICK'){
+    console.log(msg.eventKey);
+  }
+  weixin.sendMsg(resMsg);
+});
 
 
 module.exports = router;

@@ -24,7 +24,7 @@ module.exports = {
         }, {
           "name": "开发小工具",
           "sub_button": [{
-            "type": "click",
+            "type": "scancode_push",
             "name": "扫一扫",
             "key": "scancode_push"
           }]

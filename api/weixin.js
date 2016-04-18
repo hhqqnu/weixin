@@ -56,7 +56,7 @@ WeiXin.prototype.parseEventMsg = function(){
     "event" : this.data.Event[0],
     "eventKey" : eventKey
   }
-  
+
   emitter.emit("weixinEventMsg", msg);
   return this;
 }
@@ -159,6 +159,8 @@ WeiXin.prototype.loop = function(req, res) {
   });
 
   req.on('end', function() {
+    console.log(buf);
+    
     xml2js.parseString(buf, function(err, json) {
       if (err) {
         err.status = 400;
@@ -167,7 +169,9 @@ WeiXin.prototype.loop = function(req, res) {
       }
     });
     self.data = req.body.xml;
+    
     self.parse();
+    
   });
 }
 

@@ -40,32 +40,40 @@ weixin.textMsg(function(msg) {
     var splits = msgContent.split(' ');
     if (splits.length == 2) {
       var city = splits[1];
-      tianqi(city, tqCallback());
+      //tianqi(city, tqCallback());
+      tianqi(city, function(data) {
+        resMsg.content = data;
+        weixin.sendMsg(resMsg);
+      });
     } else {
-      tianqi('', tqCallback());
+      //tianqi('', tqCallback());
+      tianqi('', function(data) {
+        resMsg.content = data;
+        weixin.sendMsg(resMsg);
+      });
     }
-  } else if(isKeyInStr(msgContent,'a')){
+  } else if (isKeyInStr(msgContent, 'a')) {
     var splits = msgContent.split(' ');
     var reqBlogs = [];
-    if(splits.length == 2){
-      var index = parseInt(splits[1],10);
-      if(isNaN(index)){
+    if (splits.length == 2) {
+      var index = parseInt(splits[1], 10);
+      if (isNaN(index)) {
         reqBlogs.push(blog.getLastBlog());
-      }else{
+      } else {
         reqBlogs.push(blog.getBlogByIndex(index));
       }
-    }else{
+    } else {
       reqBlogs = blog.getAllBlog();
     }
 
     resMsg = {
-      fromUserName : msg.toUserName,
-      toUserName : msg.fromUserName,
-      msgType:'news',
-      reqBlogs:reqBlogs,
-      funcFlag:0
+      fromUserName: msg.toUserName,
+      toUserName: msg.fromUserName,
+      msgType: 'news',
+      reqBlogs: reqBlogs,
+      funcFlag: 0
     };
-    
+
     flag = true;
   } else {
     flag = true;
@@ -84,64 +92,47 @@ weixin.textMsg(function(msg) {
     return false;
   }
 
-  function tqCallback() {
-    return function(json) {
-      if (json.err) {
-        return weixin.sendMsg(resMsg)
-      }
-      var data = json.msg;
-      if (data.errNum == 0) {
-        var today = data.retData.today;
-        var todayStr = " " + data.retData.city + "天气 " + today.type + "\n";
-        todayStr += "  当前温度 " + today.curTemp + "\n";
-        todayStr += "  最低温度 " + today.lowtemp + "\n";
-        todayStr += "  最高温度 " + today.hightemp + "\n";
-        todayStr += "  风力 " + today.fengli + "\n";
-
-        var todayOtherStr = "";
-
-        today.index.forEach(function(item, index) {
-          todayOtherStr += "\n " + (++index) + "." + item.name + " " + item.index + " " + item.details;
-        });
-
-        //console.log(data.retData.forecast);
-        var forecastStr = '\n未来四天天气情况：';
-        data.retData.forecast.forEach(function(item,index){
-          var i = index++;
-          forecastStr += '\n' + (++i) + '.' + item.date + ' ' + item.week + ' ' + item.fengxiang + ' ' + item.fengli + ' ' + item.hightemp + ' ' + item.lowtemp + ' ' + item.type;
-        });
-
-        resMsg.content = todayStr + todayOtherStr + forecastStr;
-        return weixin.sendMsg(resMsg);
-      } else {
-        return weixin.sendMsg(resMsg)
-      }
-    }
-  }
-
   if (flag) {
     weixin.sendMsg(resMsg);
   }
 
 });
 
-weixin.eventMsg(function(msg){
-  log.info('收到事件消息:'+JSON.stringify(msg));
+
+
+weixin.eventMsg(function(msg) {
+  var flag = false;
   var resMsg = {
-    fromUserName:msg.toUserName,
-    toUserName:msg.fromUserName,
-    msgType:'text',
-    content:'',
-    funcFlag:0
+    fromUserName: msg.toUserName,
+    toUserName: msg.fromUserName,
+    msgType: 'text',
+    content: '',
+    funcFlag: 0
   };
+  var eventName = msg.event;
+  if (eventName == 'subscribe') {
+    resMsg.content = 'TOM在此欢迎您！有任何疑问请回复 help 或 bz';
+    flag = true;
+  } else if (eventName == 'unsubscribe') {
+    resMsg.content = 'TOM很伤心，为啥要取消呢?';
+    flag = true;
+  } else if (msg.event == 'CLICK') {
+    if (msg.eventKey == 'getlocationweather') {
+      tianqi('', function(data) {
+        resMsg.content = data;
+        weixin.sendMsg(resMsg);
+      });
+    } else if (msg.eventKey == 'scancode_push') {
 
-  if(msg.event == 'subscribe'){
-
+    }
+  } else if(eventName == 'scancode_push'){
+    
+  }else {
+    flag = true;
   }
-  if(msg.event == 'CLICK'){
-    console.log(msg.eventKey);
+  if (flag) {
+    weixin.sendMsg(resMsg);
   }
-  weixin.sendMsg(resMsg);
 });
 
 

@@ -20,13 +20,37 @@ module.exports = {
             "name": "天气",
             "key": "getlocationweather",
             "sub_button": []
+          }, {
+            "type": "location_select",
+            "name": "发送位置",
+            "key": "location_select",
+            "sub_button": []
           }]
         }, {
           "name": "开发小工具",
           "sub_button": [{
             "type": "scancode_push",
-            "name": "扫一扫",
-            "key": "scancode_push"
+            "name": "扫码推事件",
+            "key": "scancode_push",
+          }, {
+            "type": "scancode_waitmsg",
+            "name": "扫码带提示",
+            "key": "scancode_waitmsg"
+          }, {
+            "type": "pic_sysphoto",
+            "name": "系统拍照发图",
+            "key": "pic_sysphoto",
+            "sub_button": []
+          }, {
+            "type": "pic_photo_or_album",
+            "name": "拍照或者相册发图",
+            "key": "pic_photo_or_album",
+            "sub_button": []
+          }, {
+            "type": "pic_weixin",
+            "name": "微信相册发图",
+            "key": "pic_weixin",
+            "sub_button": []
           }]
         }]
       }

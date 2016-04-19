@@ -125,9 +125,11 @@ weixin.eventMsg(function(msg) {
     } else if (msg.eventKey == 'scancode_push') {
 
     }
-  } else if(eventName == 'scancode_push'){
-    
-  }else {
+  } else if (eventName == 'scancode_waitmsg') {
+    resMsg.content = '当前操作:' + msg.scanCodeInfo.ScanType[0] + ',扫描结果:' + msg.scanCodeInfo.ScanResult[0];
+    flag = true;
+    //console.log('扫描事件',msg.scanCodeInfo);
+  } else {
     flag = true;
   }
   if (flag) {
@@ -135,5 +137,35 @@ weixin.eventMsg(function(msg) {
   }
 });
 
+weixin.imageMsg(function(msg) {
+  var resMsg = {
+    fromUserName: msg.toUserName,
+    toUserName: msg.fromUserName,
+    msgType: 'image',
+    mediaId: msg.mediaId,
+    funcFlag: 0
+  };
+  weixin.sendPicMsg(resMsg);
+});
+
+weixin.locationMsg(function(msg) {
+ /* { toUserName: 'gh_348a152366bd',
+  fromUserName: 'o9jPPv6wx9Q3ZQumaCL2T5L64sBw',
+  createTime: '1461072687',
+  msgType: 'location',
+  locationX: '31.283890',
+  locationY: '121.495202',
+  scale: '15',
+  label: '上海市虹口区',
+  msgId: '6275259408149074106' }*/
+  var resMsg = {
+    fromUserName: msg.toUserName,
+    toUserName: msg.fromUserName,
+    msgType: 'text',
+    content: msg.label,
+    funcFlag: 0
+  };
+  weixin.sendMsg(resMsg);
+});
 
 module.exports = router;

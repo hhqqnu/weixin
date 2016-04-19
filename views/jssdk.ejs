@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSSDK</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+ <%=data.signature%> 
+</body>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+  var signature = '<%=data.signature%>';
+  var appid = '<%=data.appid%>';
+  var timestamp = '<%=data.timestamp%>';
+  var noncestr = '<%=data.noncestr%>';
+  //console.log([signature,appid,timestamp,noncestr]);
+  wx.config({
+    debug:true,
+    appId: appid,
+    timestamp: timestamp,
+    nonceStr: noncestr,
+    signature:signature,
+    jsApiList: [
+        'onMenuShareQQ',
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage'
+    ]
+  });
+  wx.ready(function(){
+      //share();    
+  });
+  /*
+
+  wx.error(function(res){
+      alert(JSON.stringify(res));
+  });
+
+  var shareWxData = {
+      title: '分享时的题目',
+      desc: '分享时的描述',
+      link: '分享时的链接',
+      //分享图片的路径
+      imgUrl: '', 
+      trugger: function(res){
+          alert('用户点击分享朋友圈');
+      },
+      success: function(res){
+          alert('分享成功');
+      },
+      cancel: function(res){
+          alert('分享取消');
+      },
+      fail: function(res){
+          alert(JSON.stringify(res));
+      }
+  };
+
+  function share(){
+      //分享到朋友圈
+      wx.onMenuShareTimeline(shareWxData);
+      //分享给微信好友
+      wx.onMenuShareAppMessage(shareWxData);
+      //分享给QQ好友
+      wx.onMenuShareQQ(shareWxData);
+  }*/
+</script>
+</html>

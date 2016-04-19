@@ -15,18 +15,23 @@ module.exports = function(word, callback) {
       };
       request.get(options, function(error, response, body) {
         var cityNameResult = JSON.parse(body);
-        var city = cityNameResult.retData.city;
-
-        getDataByCityName(city, function(json) {
-          returnTqCallback(json, callback);
-        });
+        if (cityNameResult && cityNameResult.retData && cityNameResult.retData.city) {
+          var city = cityNameResult.retData.city;
+          getDataByCityName(city, function(json) {
+            returnTqCallback(json, callback);
+          });
+        }else{
+          callback('error');
+        }
         //getDataByCityName(city, returnTqCallback(json,callback));
 
       });
     });
   } else {
     //getDataByCityName(word, callback);
-    getDataByCityName(word, returnTqCallback(callback));
+    getDataByCityName(word, function(json){
+      returnTqCallback(json,callback);
+    });
   }
 }
 

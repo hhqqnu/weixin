@@ -6,6 +6,8 @@ var aotuConfig = config.wx_config.aotu;
 
 var util = require('../util/util');
 
+var jssdk = require('../api/jssdk');
+
 router.get('/', function(req, res, next) {
   res.status(200).send('api page');
 });
@@ -60,6 +62,33 @@ router.get('/menu_create', function(req, res, next) {
       return res.status(500).send('创建菜单失败');
     });
   });
+});
+
+router.get('/jssdk', function(req, res, next) {
+  var url = req.query.url || 'http://hhqqnu163.ngrok.cc';
+  if (!!url) {
+    //url = encodeURIComponent(url);
+    new jssdk(url, res, function(data) {
+      /*res.status(200).send({
+        url: data.url,
+        noncestr: data.noncestr,
+        timestamp: data.timestamp,
+        signature: data.signature,
+        appid: aotuConfig.appid
+      });*/
+      res.render('jssdk', {
+        data: {
+          url: data.url,
+          noncestr: data.noncestr,
+          timestamp: data.timestamp,
+          signature: data.signature,
+          appid: aotuConfig.appid
+        }
+      });
+    });
+  } else {
+    res.status(200).send('请传入url');
+  }
 });
 
 module.exports = router;

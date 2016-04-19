@@ -43,29 +43,74 @@ WeiXin.prototype.parseTextMsg = function() {
   return this;
 }
 
-WeiXin.prototype.parseEventMsg = function(){
+WeiXin.prototype.parseEventMsg = function() {
   var eventKey = '';
-  if(this.data.EventKey){
+  if (this.data.EventKey) {
     eventKey = this.data.EventKey[0];
   }
   var msg = {
-    "toUserName" : this.data.ToUserName[0],
-    "fromUserName" : this.data.FromUserName[0],
-    "createTime" : this.data.CreateTime[0],
-    "msgType" : this.data.MsgType[0],
-    "event" : this.data.Event[0],
-    "eventKey" : eventKey
+    "toUserName": this.data.ToUserName[0],
+    "fromUserName": this.data.FromUserName[0],
+    "createTime": this.data.CreateTime[0],
+    "msgType": this.data.MsgType[0],
+    "event": this.data.Event[0],
+    "eventKey": eventKey
   }
+
+
+  if (this.data.ScanCodeInfo) {
+    msg.scanCodeInfo = this.data.ScanCodeInfo[0];
+  }
+
 
   emitter.emit("weixinEventMsg", msg);
   return this;
 }
 
-WeiXin.prototype.eventMsg = function(callback){
-  emitter.on('weixinEventMsg',callback);
+WeiXin.prototype.parseImageMsg = function() {
+  var msg = {
+    "toUserName": this.data.ToUserName[0],
+    "fromUserName": this.data.FromUserName[0],
+    "createTime": this.data.CreateTime[0],
+    "msgType": this.data.MsgType[0],
+    "picUrl": this.data.PicUrl[0],
+    "msgId": this.data.MsgId[0],
+    "mediaId": this.data.MediaId[0]
+  };
+  emitter.emit('weixinImageMsg', msg);
   return this;
 }
 
+WeiXin.prototype.parseLocationMsg = function(){
+  var msg = {
+    "toUserName": this.data.ToUserName[0],
+    "fromUserName": this.data.FromUserName[0],
+    "createTime": this.data.CreateTime[0],
+    "msgType": this.data.MsgType[0],
+    "locationX": this.data.Location_X[0],
+    "locationY": this.data.Location_Y[0],
+    "scale": this.data.Scale[0],
+    "label":this.data.Label[0],
+    "msgId":this.data.MsgId[0]
+  };
+  emitter.emit('weixinLocationMsg', msg);
+  return this;
+}
+
+WeiXin.prototype.eventMsg = function(callback) {
+  emitter.on('weixinEventMsg', callback);
+  return this;
+}
+
+WeiXin.prototype.imageMsg = function(callback) {
+  emitter.on('weixinImageMsg', callback);
+  return this;
+}
+
+WeiXin.prototype.locationMsg = function(callback){
+  emitter.on('weixinLocationMsg',callback);
+  return this;
+}
 
 WeiXin.prototype.sendTextMsg = function(msg) {
   if (msg.content == '') {
@@ -89,8 +134,6 @@ WeiXin.prototype.sendTextMsg = function(msg) {
   this.res.send(output);
 
   return this;
-
-
 }
 
 WeiXin.prototype.sendNewsMsg = function(msg) {
@@ -122,6 +165,26 @@ WeiXin.prototype.sendNewsMsg = function(msg) {
   return this;
 }
 
+WeiXin.prototype.sendPicMsg = function(msg) {
+  var time = Math.round(new Date().getTime() / 1000);
+  var output = "" +
+    "<xml>" +
+    "<ToUserName><![CDATA[" + msg.toUserName + "]]></ToUserName>" +
+    "<FromUserName><![CDATA[" + msg.fromUserName + "]]></FromUserName>" +
+    "<CreateTime>" + time + "</CreateTime>" +
+    "<MsgType><![CDATA[" + msg.msgType + "]]></MsgType>" +
+    "<Image>" +
+    "<MediaId><![CDATA[" + msg.mediaId + "]]></MediaId>" +
+    "</Image>" +
+    "</xml>";
+  this.res.type('xml');
+  this.res.send(output);
+  return this;
+}
+//TODO:
+WeiXin.prototype.sendLocationMsg = function (msg) {
+  return this;
+}
 
 WeiXin.prototype.parse = function() {
   this.msgType = this.data.MsgType[0] ? this.data.MsgType[0] : 'text';
@@ -130,6 +193,12 @@ WeiXin.prototype.parse = function() {
       this.parseTextMsg();
     case 'event':
       this.parseEventMsg();
+      break;
+    case 'image':
+      this.parseImageMsg();
+      break;
+    case 'location':
+      this.parseLocationMsg();
       break;
   }
 }
@@ -140,10 +209,15 @@ WeiXin.prototype.sendMsg = function(msg) {
     case 'text':
       this.sendTextMsg(msg);
       break;
-
     case 'news':
       this.sendNewsMsg(msg);
       break;
+    case 'image':
+      this.sendPicMsg(msg);
+      break;
+    /*case 'location':
+      this.sendLocationMsg(msg);
+      break;*/
   }
 }
 
@@ -159,8 +233,8 @@ WeiXin.prototype.loop = function(req, res) {
   });
 
   req.on('end', function() {
-    console.log(buf);
-    
+    //console.log(buf);
+
     xml2js.parseString(buf, function(err, json) {
       if (err) {
         err.status = 400;
@@ -169,9 +243,10 @@ WeiXin.prototype.loop = function(req, res) {
       }
     });
     self.data = req.body.xml;
-    
+
+    console.log(self.data);
     self.parse();
-    
+
   });
 }
 

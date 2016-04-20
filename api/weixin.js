@@ -191,6 +191,7 @@ WeiXin.prototype.parse = function() {
   switch (this.msgType) {
     case 'text':
       this.parseTextMsg();
+      break;
     case 'event':
       this.parseEventMsg();
       break;
@@ -244,7 +245,7 @@ WeiXin.prototype.loop = function(req, res) {
     });
     self.data = req.body.xml;
 
-    console.log(self.data);
+    //console.log(self.data);
     self.parse();
 
   });

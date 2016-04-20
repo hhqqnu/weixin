@@ -56,6 +56,10 @@ app.get('/', function(req, res) {
   });
 });
 
+app.get('/jssdk',function(req,res){
+  res.render('jssdk');
+});
+
 //weixin
 app.use('/wx', wx);
 app.use('/api',api);

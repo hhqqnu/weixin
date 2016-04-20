@@ -64,26 +64,75 @@ router.get('/menu_create', function(req, res, next) {
   });
 });
 
+//发送群发消息
+router.post('/send_all_text',function(req,res,next){
+  var content = req.body.msgContent;
+  var url = 'https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=';
+
+  util.getToken(aotuConfig, function(result){
+    if(result.err){
+      return res.status(500).send(result.msg);
+    }
+
+    var form=   {
+       "filter":{
+          "is_to_all":true
+       },
+       "text":{
+          "content":content
+       },
+        "msgtype":"text"
+    }; 
+    var access_token = result.data.access_token;
+    request.post({
+      url: url + access_token,
+      form: JSON.stringify(form)
+    },function(error,httpResponse,body){
+      if(!error){
+        return res.status(200).send(JSON.parse(body));
+      }
+      return res.status(500).send('群发消息失败');
+    });
+  });
+});
+//查看群发消息状态
+router.post('/request_send_all_status',function(req,res,next){
+  var msgId = req.body.msgId;
+  var url = 'https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=';
+  util.getToken(aotuConfig, function(result){
+    if(result.err){
+      return res.status(500).send(result.msg);
+    }
+    var form = {
+     "msg_id":msgId
+    }
+
+    var access_token = result.data.access_token;
+    request.post({
+      url: url + access_token,
+      form: JSON.stringify(form)
+    },function(error,httpResponse,body){
+      if(!error){
+        return res.status(200).send(JSON.parse(body));
+      }
+
+      return res.status(500).send('查看群发消息失败');
+    })
+  });
+});
+
+
 router.get('/jssdk', function(req, res, next) {
-  var url = req.query.url || 'http://hhqqnu163.ngrok.cc';
+  var url = req.query.url || '';
+  //console.log(url);
   if (!!url) {
-    //url = encodeURIComponent(url);
     new jssdk(url, res, function(data) {
-      /*res.status(200).send({
+      res.status(200).send({
         url: data.url,
         noncestr: data.noncestr,
         timestamp: data.timestamp,
         signature: data.signature,
         appid: aotuConfig.appid
-      });*/
-      res.render('jssdk', {
-        data: {
-          url: data.url,
-          noncestr: data.noncestr,
-          timestamp: data.timestamp,
-          signature: data.signature,
-          appid: aotuConfig.appid
-        }
       });
     });
   } else {

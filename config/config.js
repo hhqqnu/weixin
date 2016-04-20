@@ -12,6 +12,10 @@ module.exports = {
             "type": "view",
             "name": "博客",
             "url": "http://www.cnblogs.com/tom-zhu"
+          },{
+            "type":"view",
+            "name":"JSSDK",
+            "url":"http://hhqqnu163.ngrok.cc/jssdk"
           }]
         }, {
           "name": "生活工具",

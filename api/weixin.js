@@ -1,7 +1,9 @@
 var sha1 = require('sha1'),
   events = require('events'),
   emitter = new events.EventEmitter(),
-  xml2js = require('xml2js');
+  xml2js = require('xml2js'),
+  util = require('../util/util'),
+  request = require('request');
 
 var WeiXin = function() {
   this.data = '';
@@ -81,7 +83,7 @@ WeiXin.prototype.parseImageMsg = function() {
   return this;
 }
 
-WeiXin.prototype.parseLocationMsg = function(){
+WeiXin.prototype.parseLocationMsg = function() {
   var msg = {
     "toUserName": this.data.ToUserName[0],
     "fromUserName": this.data.FromUserName[0],
@@ -90,8 +92,8 @@ WeiXin.prototype.parseLocationMsg = function(){
     "locationX": this.data.Location_X[0],
     "locationY": this.data.Location_Y[0],
     "scale": this.data.Scale[0],
-    "label":this.data.Label[0],
-    "msgId":this.data.MsgId[0]
+    "label": this.data.Label[0],
+    "msgId": this.data.MsgId[0]
   };
   emitter.emit('weixinLocationMsg', msg);
   return this;
@@ -107,8 +109,8 @@ WeiXin.prototype.imageMsg = function(callback) {
   return this;
 }
 
-WeiXin.prototype.locationMsg = function(callback){
-  emitter.on('weixinLocationMsg',callback);
+WeiXin.prototype.locationMsg = function(callback) {
+  emitter.on('weixinLocationMsg', callback);
   return this;
 }
 
@@ -166,23 +168,23 @@ WeiXin.prototype.sendNewsMsg = function(msg) {
 }
 
 WeiXin.prototype.sendPicMsg = function(msg) {
-  var time = Math.round(new Date().getTime() / 1000);
-  var output = "" +
-    "<xml>" +
-    "<ToUserName><![CDATA[" + msg.toUserName + "]]></ToUserName>" +
-    "<FromUserName><![CDATA[" + msg.fromUserName + "]]></FromUserName>" +
-    "<CreateTime>" + time + "</CreateTime>" +
-    "<MsgType><![CDATA[" + msg.msgType + "]]></MsgType>" +
-    "<Image>" +
-    "<MediaId><![CDATA[" + msg.mediaId + "]]></MediaId>" +
-    "</Image>" +
-    "</xml>";
-  this.res.type('xml');
-  this.res.send(output);
-  return this;
-}
-//TODO:
-WeiXin.prototype.sendLocationMsg = function (msg) {
+    var time = Math.round(new Date().getTime() / 1000);
+    var output = "" +
+      "<xml>" +
+      "<ToUserName><![CDATA[" + msg.toUserName + "]]></ToUserName>" +
+      "<FromUserName><![CDATA[" + msg.fromUserName + "]]></FromUserName>" +
+      "<CreateTime>" + time + "</CreateTime>" +
+      "<MsgType><![CDATA[" + msg.msgType + "]]></MsgType>" +
+      "<Image>" +
+      "<MediaId><![CDATA[" + msg.mediaId + "]]></MediaId>" +
+      "</Image>" +
+      "</xml>";
+    this.res.type('xml');
+    this.res.send(output);
+    return this;
+  }
+  //TODO:
+WeiXin.prototype.sendLocationMsg = function(msg) {
   return this;
 }
 
@@ -216,12 +218,43 @@ WeiXin.prototype.sendMsg = function(msg) {
     case 'image':
       this.sendPicMsg(msg);
       break;
-    /*case 'location':
-      this.sendLocationMsg(msg);
-      break;*/
+      /*case 'location':
+        this.sendLocationMsg(msg);
+        break;*/
   }
 }
 
+//获取用户信息
+WeiXin.prototype.getUser = function(options, callback) {
+  var self = this;
+  util.getToken(config, function(result) {
+    if (result.err) {
+      return callback({
+        err: 1,
+        msg: result.err
+      });
+    }
+    var access_token = result.data.access_token;
+    var url = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + '&openid=' + options.openId + '&lang=';
+    if (options.lang) {
+      url += options.lang;
+    } else {
+      url += 'zh_CN';
+    }
+    request.get({
+      url: url
+    }, function(error, httpResponse, body) {
+      if (error) return callback({
+        err: 1,
+        msg: error
+      });
+      return callback({
+        err: 0,
+        msg: JSON.parse(body)
+      });
+    });
+  });
+}
 
 WeiXin.prototype.loop = function(req, res) {
   this.res = res;

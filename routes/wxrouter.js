@@ -124,6 +124,18 @@ weixin.eventMsg(function(msg) {
       });
     } else if (msg.eventKey == 'scancode_push') {
 
+    } else if (msg.eventKey == 'my_info') {
+      //TODO:发送的信息
+      weixin.getUser({
+        openId: msg.fromUserName
+      }, function(data) {
+        if (data.err) {
+          resMsg.content = '获取ERROR：' + data.msg;
+        } else {
+          resMsg.content = JSON.stringify(data.msg);
+        }
+        weixin.sendMsg(resMsg);
+      });
     }
   } else if (eventName == 'scancode_waitmsg') {
     resMsg.content = '当前操作:' + msg.scanCodeInfo.ScanType[0] + ',扫描结果:' + msg.scanCodeInfo.ScanResult[0];
@@ -149,15 +161,15 @@ weixin.imageMsg(function(msg) {
 });
 
 weixin.locationMsg(function(msg) {
- /* { toUserName: 'gh_348a152366bd',
-  fromUserName: 'o9jPPv6wx9Q3ZQumaCL2T5L64sBw',
-  createTime: '1461072687',
-  msgType: 'location',
-  locationX: '31.283890',
-  locationY: '121.495202',
-  scale: '15',
-  label: '上海市虹口区',
-  msgId: '6275259408149074106' }*/
+  /* { toUserName: 'gh_348a152366bd',
+   fromUserName: 'o9jPPv6wx9Q3ZQumaCL2T5L64sBw',
+   createTime: '1461072687',
+   msgType: 'location',
+   locationX: '31.283890',
+   locationY: '121.495202',
+   scale: '15',
+   label: '上海市虹口区',
+   msgId: '6275259408149074106' }*/
   var resMsg = {
     fromUserName: msg.toUserName,
     toUserName: msg.fromUserName,

@@ -5,6 +5,9 @@ var sha1 = require('sha1'),
   util = require('../util/util'),
   request = require('request');
 
+var config = require('../config/config');
+var aotuConfig = config.wx_config.aotu;
+
 var WeiXin = function() {
   this.data = '';
   this.msgType = 'text';
@@ -227,7 +230,7 @@ WeiXin.prototype.sendMsg = function(msg) {
 //获取用户信息
 WeiXin.prototype.getUser = function(options, callback) {
   var self = this;
-  util.getToken(config, function(result) {
+  util.getToken(aotuConfig, function(result) {
     if (result.err) {
       return callback({
         err: 1,

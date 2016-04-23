@@ -67,6 +67,13 @@ WeiXin.prototype.parseEventMsg = function() {
     msg.scanCodeInfo = this.data.ScanCodeInfo[0];
   }
 
+  if (this.data.Latitude){
+    msg.Latitude = this.data.Latitude[0];
+  }
+
+  if (this.data.Longitude){
+    msg.Longitude = this.data.Longitude[0];
+  }
 
   emitter.emit("weixinEventMsg", msg);
   return this;
@@ -281,7 +288,7 @@ WeiXin.prototype.loop = function(req, res) {
     });
     self.data = req.body.xml;
 
-    //console.log(self.data);
+    // console.log(self.data);
     self.parse();
 
   });

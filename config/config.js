@@ -16,6 +16,10 @@ module.exports = {
             "type": "view",
             "name": "JSSDK",
             "url": "http://hhqqnu163.ngrok.cc/jssdk"
+          },{
+            "type": "view",
+            "name": "登录",
+            "url": "http://hhqqnu163.ngrok.cc/api/login"
           }]
         }, {
           "name": "生活工具",

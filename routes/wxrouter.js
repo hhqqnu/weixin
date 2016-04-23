@@ -141,6 +141,9 @@ weixin.eventMsg(function(msg) {
     resMsg.content = '当前操作:' + msg.scanCodeInfo.ScanType[0] + ',扫描结果:' + msg.scanCodeInfo.ScanResult[0];
     flag = true;
     //console.log('扫描事件',msg.scanCodeInfo);
+  }else if (eventName == 'LOCATION'){
+    resMsg.content = '上传地理位置纬度：'+msg.Latitude+',经度：'+ msg.Longitude;
+    flag = true;
   } else {
     flag = true;
   }

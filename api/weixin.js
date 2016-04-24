@@ -269,16 +269,12 @@ WeiXin.prototype.getUser = function(options, callback) {
 WeiXin.prototype.loop = function(req, res) {
   this.res = res;
   var self = this;
-
   var buf = '';
   req.setEncoding('utf-8');
   req.on('data', function(chunk) {
     buf += chunk;
   });
-
   req.on('end', function() {
-    //console.log(buf);
-
     xml2js.parseString(buf, function(err, json) {
       if (err) {
         err.status = 400;
@@ -287,12 +283,8 @@ WeiXin.prototype.loop = function(req, res) {
       }
     });
     self.data = req.body.xml;
-
-    // console.log(self.data);
     self.parse();
-
   });
 }
-
 
 module.exports = new WeiXin();
